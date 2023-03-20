@@ -1,6 +1,6 @@
 <template>
   <view>
-    goods_list(楼层跳转页面)
+    <text>goods_list(楼层跳转页面)</text>
   </view>
 </template>
 
