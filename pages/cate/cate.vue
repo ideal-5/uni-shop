@@ -1,5 +1,7 @@
 <template>
   <view>
+    <!-- 自定义的搜索组件 -->
+    <my-search @click="goSearch"></my-search>
     <view class="scroll-view-container">
       <!-- 左侧 -->
       <scroll-view class="left-scroll-view" scroll-y :style="{height: wh + 'px'}">
@@ -50,11 +52,16 @@
     onLoad() {
       // 获取当前设备可用高度
       const sysInfo = uni.getSystemInfoSync()
-      this.wh = sysInfo.windowHeight,
+      this.wh = sysInfo.windowHeight - 50, // 减去顶部搜索框的高度
         // 调用获取分类列表数据的函数
         this.getCateList()
     },
     methods: {
+      goSearch() {
+        uni.navigateTo({
+          url: '/subpkg/search/search'
+        })
+      },
       // 获取分类列表数据
       async getCateList() {
         const {

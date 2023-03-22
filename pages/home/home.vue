@@ -1,5 +1,9 @@
 <template>
   <view>
+    <!-- 自定义搜索框组件 -->
+    <view class="search-box">
+      <my-search @click="goSearch"></my-search>
+    </view>
     <!-- 轮播图 -->
     <swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
       <swiper-item v-for="(item,index) in swiperList" :key="index">
@@ -57,6 +61,11 @@
       this.getFloorList() // 获取楼层数据
     },
     methods: {
+      goSearch() {
+        uni.navigateTo({
+          url: "/subpkg/search/search"
+        })
+      },
       // 获取轮播图
       async getSwiperList() {
         const {
@@ -92,7 +101,6 @@
             prod.url = '/subpkg/goods_list/goods_list?' + prod.navigator_url.split('?')[1]
           })
         })
-        console.log(res.message);
         this.floorList = res.message
       }
     }
@@ -135,5 +143,11 @@
   .floor-img-box {
     display: flex;
     padding-left: 10rpx;
+  }
+
+  .search-box {
+    position: sticky;
+    top: 0;
+    z-index: 999;
   }
 </style>
