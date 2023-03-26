@@ -44,10 +44,16 @@
 </template>
 
 <script>
+  import {
+    mapState,
+    mapMutations,
+    mapGetters
+  } from 'vuex'
   export default {
     data() {
       return {
-        goods_info: {},
+        goods_info: {}, // 存储返回的数据
+        // 自定义tabbar icons配置对象
         options: [
           //   {  // 后期想加 可以自己加个客服
           //   icon: 'headphones',
@@ -61,9 +67,10 @@
           }, {
             icon: 'cart',
             text: '购物车',
-            info: 9
+            info: 0
           }
         ],
+        // 自定义tabbar 按钮配置对象
         buttonGroup: [{
             text: '加入购物车',
             backgroundColor: '#ff0000',
@@ -84,6 +91,20 @@
         if (this.star) return 'star'
         uni.$showMsg('其实收藏不了')
         return 'star-filled'
+      },
+      ...mapState('m_cart', []),
+      ...mapGetters('m_cart', ['total'])
+    },
+    watch: {
+      total: {
+        handler(newValue) {
+          const finResult = this.options.find(x => x.text === '购物车')
+          if (finResult) {
+            finResult.info = newValue
+            newValue > 0 ? finResult.icon = 'cart-filled' : finResult.icon = 'cart'
+          }
+        },
+        immediate: true // 开启初次监听
       }
     },
     // 页面滚动事件
@@ -96,6 +117,8 @@
       this.getGoodsDetail(goods_id)
     },
     methods: {
+      // 将vux中的方法映射到组件
+      ...mapMutations('m_cart', ['addToCart']),
       async getGoodsDetail(goods_id) {
         const {
           data: res
@@ -104,7 +127,7 @@
         })
         if (res.meta.status !== 200) return uni.$showMsg()
 
-        // 给结构直接返回的结构加一个 style="display:block;"
+        // 给后端直接返回的结构加一个 style="display:block;"
         res.message.goods_introduce = res.message.goods_introduce.replace(/<img /g, '<img style="display:block;"')
           .replace(/webp/g, 'jpg')
         this.goods_info = res.message
@@ -116,12 +139,28 @@
           urls: this.goods_info.pics.map(x => x.pics_big) // map遍历数组返回新数组  x为数组中的每一个元素
         })
       },
-      // 点击自定义组件tabbar
+      // 点击自定义组件的左边icons
       onClick(e) {
         if (e.content.text === '购物车') {
           uni.switchTab({
             url: '/pages/cart/cart'
           })
+        }
+      },
+      // 点击定义组件的右边按钮
+      buttonClick(e) {
+        if (e.content.text == '加入购物车') {
+          // 组织商品信息对象
+          const goods = {
+            goods_id: this.goods_info.goods_id, // id
+            goods_name: this.goods_info.goods_name, // 名称
+            goods_price: this.goods_info.goods_price, // 价格
+            goods_count: 1, // 数量
+            goods_small_logo: this.goods_info.goods_small_logo, //图标
+            goods_state: true // 选中状态
+          }
+          // 调用addToCart方法 把商品对象加入vuex供购物车页面使用
+          this.addToCart(goods)
         }
       },
       changeIcons() {

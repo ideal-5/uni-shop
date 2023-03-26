@@ -1,3 +1,8 @@
+<!-- 假搜索框（用于跳转到搜索页面）  接收参数：
+1.bgcolor背景色 字符串
+2.radius圆角尺寸 数字
+3.text 文本 字符串
+3.@click点击事件 -->
 <template>
   <view class="my-search-container" :style="{'background-color':bgcolor}" @click="portClick">
     <view class="my-search-box" :style="{'border-radius':radius + 'px'}">
