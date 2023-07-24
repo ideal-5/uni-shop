@@ -1,16 +1,14 @@
 import App from './App'
 import Vue from 'vue'
 import store from '@/store/store.js'
-// 导入网络请求的包
-import {
-  $http
-} from '@escook/request-miniprogram'
+// 导入网络请求并挂载
+import { $http } from '@escook/request-miniprogram'
 uni.$http = $http
 
 // 配置请求根路径
 // $http.baseUrl = 'https://www.uinav.com'
 $http.baseUrl = 'https://api-hmugo-web.itheima.net'
-// 请求开始之前做一些事情
+// 请求拦截
 $http.beforeRequest = function(options) {
   uni.showLoading({ // 展示loading
     title: '数据加载中...'
@@ -22,11 +20,11 @@ $http.beforeRequest = function(options) {
     }
   }
 }
-// 请求完成之后做一些事情
+// 响应拦截
 $http.afterRequest = function() {
   uni.hideLoading() // 取消loading
 }
-// 封装弹窗的方法
+// 封装弹窗
 uni.$showMsg = function(title = '数据请求失败', duration = 1500) {
   uni.showToast({ // 展示loading
     title,
